@@ -1,0 +1,48 @@
+<idea-plugin>
+    <id>run-claude-code-cmd-anywhere</id>
+    <name>Run Claude Code Cmd Any Where</name>
+    <vendor email="support@adbyte.com" url="https://adbyte.com">Adbyte</vendor>
+
+    <description><![CDATA[
+    <p>Run Claude Code CLI commands in any directory with a right-click menu.</p>
+    <ul>
+      <li>Right-click on any directory/file in Project View to run commands</li>
+      <li>Customizable command presets in Settings → Tools → Run Claude Code Cmd Settings</li>
+      <li>Support multiple execution modes: IDE Terminal or External Terminal window</li>
+      <li>Default command: "Run Claude Here" with claude --permission-mode bypassPermissions</li>
+    </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <p>Initial release:</p>
+    <ul>
+      <li>Right-click menu integration in Project View</li>
+      <li>Customizable command presets with displayName, command, shellType, executeMode</li>
+      <li>Support Terminal (IDE built-in) and Dialog (external terminal) execution modes</li>
+      <li>Auto shell detection for Windows/Mac/Linux</li>
+    </ul>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends optional="true">org.jetbrains.plugins.terminal</depends>
+
+    <idea-version since-build="232"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.adbyte.idea.config.CmdSettingsState"/>
+        <applicationConfigurable
+            parentId="tools"
+            instance="com.adbyte.idea.config.CmdSettingsConfigurable"
+            id="runClaudeCodeCmdSettings"
+            displayName="Run Claude Code Cmd Settings"/>
+        <notificationGroup id="RunCmdHere.NotificationGroup" displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <group id="RunCmdHere.Menu"
+               class="com.adbyte.idea.action.RunCmdActionGroup"
+               popup="false">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+        </group>
+    </actions>
+</idea-plugin>

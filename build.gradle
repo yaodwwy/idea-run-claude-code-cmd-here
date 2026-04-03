@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '1.17.4'
+}
+
+group 'com.adbyte'
+
+// 从版本文件读取版本号，构建时自动递增
+def versionFile = file('version.properties')
+def currentVersion = '1.0.0'
+
+if (versionFile.exists()) {
+    def content = versionFile.text.trim()
+    if (content.startsWith('version=')) {
+        currentVersion = content.substring('version='.length())
+    }
+}
+
+// 解析版本号并递增
+def parts = currentVersion.split('\\.')
+def major = parts.length > 0 ? parts[0].toInteger() : 1
+def minor = parts.length > 1 ? parts[1].toInteger() : 0
+def patch = parts.length > 2 ? parts[2].toInteger() + 1 : 1
+def newVersion = "${major}.${minor}.${patch}"
+
+version = newVersion
+
+// 构建完成后更新版本文件
+buildPlugin.doLast {
+    versionFile.text = "version=${newVersion}"
+    println "Version updated to ${newVersion}"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+intellij {
+    version = '2024.1'
+    type = 'IC'
+    plugins = ['org.jetbrains.plugins.terminal']
+    updateSinceUntilBuild = false
+}
+
+// 发布插件配置
+publishPlugin {
+    // 令牌可通过环境变量或命令行传入: ./gradlew publishPlugin -DpluginToken=YOUR_TOKEN
+    token = System.getProperty('pluginToken')
+    channels = ['stable'] // 发布到稳定频道
+}
+
+// 禁用签名（网络问题时可手动上传）
+signPlugin {
+    enabled = false
+}
+
+tasks {
+    buildSearchableOptions {
+        enabled = false
+    }
+}
+
+// Fix encoding issues with Chinese characters
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
