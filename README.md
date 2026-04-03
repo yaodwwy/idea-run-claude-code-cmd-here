@@ -2,6 +2,12 @@
 
 An IntelliJ IDEA plugin that allows you to run Claude Code CLI commands in any directory with a right-click menu.
 
+## Screenshots
+
+| Right-click Menu | Settings | Execution |
+|:---:|:---:|:---:|
+| ![Menu](docs/screenshots/ScreenShot_2026-04-03_113611_485.png) | ![Settings](docs/screenshots/ScreenShot_2026-04-03_113641_007.png) | ![Execution](docs/screenshots/ScreenShot_2026-04-03_113654_543.png) |
+
 ## Features
 
 - **Right-click menu integration** - Run commands directly from Project View
