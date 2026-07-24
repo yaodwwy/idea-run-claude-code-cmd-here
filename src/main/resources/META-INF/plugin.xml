@@ -4,16 +4,30 @@
     <vendor email="support@adbyte.com" url="https://adbyte.com">Adbyte</vendor>
 
     <description><![CDATA[
-    <p>Run Claude Code CLI commands in any directory with a right-click menu.</p>
+    <p>Run Claude Code CLI commands in any directory with a right-click menu, and generate AI commit messages.</p>
     <ul>
       <li>Right-click on any directory/file in Project View to run commands</li>
       <li>Customizable command presets in Settings → Tools → Run Claude Code Cmd Settings</li>
       <li>Support multiple execution modes: IDE Terminal or External Terminal window</li>
       <li>Default command: "Run Claude Here" with claude --permission-mode bypassPermissions</li>
     </ul>
+    <h3>AI Git Commit</h3>
+    <p>Generate Git commit messages with AI based on your code changes. Supports DeepSeek, Gemini, SiliconFlow, Ollama, OpenAI API, Cloudflare Workers AI, 阿里云百炼, 火山引擎, OpenRouter, Kimi and OpenAI-compatible LLMs.</p>
+    <ul>
+      <li>Select the code you want to commit and click "Generate AI Commit Message".</li>
+      <li>The generated commit message is filled into the commit message editor.</li>
+      <li>Configurable custom prompts in Settings → Tools → AI Git Commit.</li>
+    </ul>
     ]]></description>
 
     <change-notes><![CDATA[
+    <p>Added AI Git Commit capability (merged from HMYDK/AIGitCommit, AGPL-3.0):</p>
+    <ul>
+      <li>Generate AI commit messages from staged/selected changes via the Commit dialog</li>
+      <li>Multiple LLM providers: DeepSeek, Gemini, SiliconFlow, Ollama, OpenAI, Cloudflare, 阿里云百炼, 火山引擎, OpenRouter, Kimi, OpenAI-compatible</li>
+      <li>Project-level &amp; custom prompts, file exclusion rules</li>
+      <li>Respect partial commit selection; trim oversized AI inputs</li>
+    </ul>
     <p>Initial release:</p>
     <ul>
       <li>Right-click menu integration in Project View</li>
@@ -24,18 +38,28 @@
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.vcs</depends>
+    <depends>com.intellij.modules.json</depends>
     <depends optional="true">org.jetbrains.plugins.terminal</depends>
+    <depends>Git4Idea</depends>
 
-    <idea-version since-build="232"/>
+    <idea-version since-build="241"/>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- Run Cmd Here: 命令预设服务（设置页已合并进 AI Commit Message） -->
         <applicationService serviceImplementation="com.adbyte.idea.config.CmdSettingsState"/>
-        <applicationConfigurable
-            parentId="tools"
-            instance="com.adbyte.idea.config.CmdSettingsConfigurable"
-            id="runClaudeCodeCmdSettings"
-            displayName="Run Claude Code Cmd Settings"/>
         <notificationGroup id="RunCmdHere.NotificationGroup" displayType="BALLOON"/>
+
+        <!-- AI Git Commit -->
+        <postStartupActivity implementation="com.hmydk.aigit.WelcomeNotification"/>
+        <notificationGroup id="AI Git Commit Notifications" displayType="BALLOON"/>
+        <applicationConfigurable
+            parentId="other"
+            instance="com.hmydk.aigit.config.ApiKeyConfigurable"
+            id="aigit.settings"
+            displayName="Run Claude Code Cmd"/>
+        <applicationService serviceImplementation="com.hmydk.aigit.config.ApiKeySettings"/>
     </extensions>
 
     <actions>
@@ -44,5 +68,13 @@
                popup="false">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
         </group>
+
+        <action id="com.hmydk.aigit.GenerateCommitMessageAction"
+                class="com.hmydk.aigit.GenerateCommitMessageAction"
+                text="Generate AI Commit Message"
+                icon="/icons/git-commit-logo.svg"
+                description="Generate a commit message using AI">
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
