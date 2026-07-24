@@ -59,8 +59,8 @@ test {
 
 // 发布插件配置
 publishPlugin {
-    // 令牌可通过环境变量或命令行传入: ./gradlew publishPlugin -DpluginToken=YOUR_TOKEN
-    token = System.getProperty('pluginToken')
+    // 令牌优先从环境变量 JETBRAINS_PLUGIN_TOKEN 读取；也可命令行传入: ./gradlew publishPlugin -DpluginToken=YOUR_TOKEN
+    token = System.getenv('JETBRAINS_PLUGIN_TOKEN') ?: System.getProperty('pluginToken')
     channels = ['stable'] // 发布到稳定频道
 }
 

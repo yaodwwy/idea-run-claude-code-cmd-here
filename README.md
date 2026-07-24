@@ -86,10 +86,24 @@ Plugin package: `build/distributions/run-claude-code-cmd-anywhere-*.zip`
 
 First time: Manual upload to https://plugins.jetbrains.com/author/me
 
-Subsequent updates:
+Subsequent updates — set the plugin token as an environment variable (recommended, one-time):
+
 ```bash
+# PowerShell (user-level, persists across sessions; reopen terminal to take effect)
+[Environment]::SetEnvironmentVariable('JETBRAINS_PLUGIN_TOKEN','YOUR_TOKEN','User')
+# or bash
+export JETBRAINS_PLUGIN_TOKEN=YOUR_TOKEN
+```
+
+Then publish:
+
+```bash
+./gradlew publishPlugin
+# or pass the token inline without persisting it:
 ./gradlew publishPlugin -DpluginToken=YOUR_TOKEN
 ```
+
+> The token is read from `JETBRAINS_PLUGIN_TOKEN` first, falling back to `-DpluginToken`. Never commit the real token to git.
 
 ## License
 
