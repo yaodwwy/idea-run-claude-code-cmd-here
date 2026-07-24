@@ -22,6 +22,12 @@ An IntelliJ IDEA plugin that lets you run Claude Code CLI commands in any direct
 
 Generate Git commit messages with AI based on your code changes. Open the Commit dialog (`Ctrl+K`) and click **Generate AI Commit Message**; the result is filled into the commit message editor.
 
+![AI Commit Message on the commit panel](docs/screenshots/ScreenShot_2026-07-24_135834_970.png)
+
+> 在提交面板（Commit 对话框）上点击 **Generate AI Commit Message**，即可用 AI 根据本次代码变更生成提交信息，并自动填入 commit message 编辑框。
+>
+> On the commit panel, click **Generate AI Commit Message** to generate a commit message with AI based on your staged changes; the message is filled into the commit message editor automatically.
+
 Supported LLM providers:
 
 - DeepSeek
