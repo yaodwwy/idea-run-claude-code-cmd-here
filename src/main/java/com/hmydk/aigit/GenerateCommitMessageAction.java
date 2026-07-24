@@ -45,7 +45,7 @@ public class GenerateCommitMessageAction extends AnAction {
     private Timer iconAnimationTimer;
     private final AtomicBoolean isGenerating = new AtomicBoolean(false);
     private int currentIconIndex = 0;
-    private final Icon originalIcon = IconLoader.getIcon("/icons/git-commit-logo.svg", getClass());
+    private final Icon originalIcon = IconLoader.getIcon("/META-INF/pluginIcon.svg", getClass());
     private final Icon[] progressIcons = new Icon[]{
             AllIcons.Process.Step_1,
             AllIcons.Process.Step_2,

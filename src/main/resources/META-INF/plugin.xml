@@ -72,7 +72,7 @@
         <action id="com.hmydk.aigit.GenerateCommitMessageAction"
                 class="com.hmydk.aigit.GenerateCommitMessageAction"
                 text="Generate AI Commit Message"
-                icon="/icons/git-commit-logo.svg"
+                icon="/META-INF/pluginIcon.svg"
                 description="Generate a commit message using AI">
             <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
         </action>
