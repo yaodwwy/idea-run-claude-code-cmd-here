@@ -17,7 +17,7 @@ if (versionFile.exists()) {
 }
 
 // 解析版本号并递增
-def parts = currentVersion.split('\.')
+def parts = currentVersion.split('\\.')
 def major = parts.length > 0 ? parts[0].toInteger() : 1
 def minor = parts.length > 1 ? parts[1].toInteger() : 0
 def patch = parts.length > 2 ? parts[2].toInteger() + 1 : 1
@@ -64,7 +64,7 @@ publishPlugin {
     channels = ['stable'] // 发布到稳定频道
 }
 
-// 禁用签名（网络问题时可手动上传）
+// 禁用签名（无本地证书时上传所需）
 signPlugin {
     enabled = false
 }
