@@ -1,0 +1,7 @@
+<idea-plugin>
+    <!--
+      当 org.jetbrains.plugins.terminal 已安装时加载本文件。
+      本插件在运行时通过 TerminalView 调用终端（见 com.adbyte.idea.executor.CmdExecutor），
+      无需在 plugin.xml 声明依赖终端的扩展；此文件仅为满足 optional 依赖需声明 config-file 的要求。
+    -->
+</idea-plugin>

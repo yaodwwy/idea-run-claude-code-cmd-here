@@ -41,7 +41,7 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.vcs</depends>
     <depends>com.intellij.modules.json</depends>
-    <depends optional="true">org.jetbrains.plugins.terminal</depends>
+    <depends optional="true" config-file="terminal-optional.xml">org.jetbrains.plugins.terminal</depends>
     <depends>Git4Idea</depends>
 
     <idea-version since-build="241"/>
