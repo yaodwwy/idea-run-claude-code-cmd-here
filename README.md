@@ -105,6 +105,22 @@ Then publish:
 
 > The token is read from `JETBRAINS_PLUGIN_TOKEN` first, falling back to `-DpluginToken`. Never commit the real token to git.
 
+### GitHub Actions
+
+The workflow at `.github/workflows/publish-plugin.yml` tests and builds the plugin on pushes and pull requests to `master`. It publishes to JetBrains Marketplace only when:
+
+- a tag beginning with `v` is pushed, for example `v1.0.19`; or
+- **Build and Publish JetBrains Plugin** is started manually with a version number.
+
+Before publishing, add a repository Actions secret named `JETBRAINS_PLUGIN_TOKEN` containing a JetBrains Marketplace token from **My Tokens**. Then publish a tagged version:
+
+```bash
+git tag v1.0.19
+git push origin v1.0.19
+```
+
+The workflow uploads the generated ZIP as a GitHub Actions artifact before publishing it. The Marketplace requires every uploaded plugin version to be unique.
+
 ## License
 
 - Plugin own code: MIT License - See [LICENSE](LICENSE)

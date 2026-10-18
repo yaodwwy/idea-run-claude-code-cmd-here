@@ -7,8 +7,11 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.terminal.ShellTerminalWidget;
+import org.jetbrains.plugins.terminal.TerminalToolWindowFactory;
 import org.jetbrains.plugins.terminal.TerminalView;
 
 import java.io.File;
@@ -115,17 +118,28 @@ public class CmdExecutor {
 
     private static void executeMacTerminal(String shellPath, String command, String workingDirectory) throws IOException {
         File workDir = new File(workingDirectory);
-        String escapedWorkingDir = workingDirectory.replace("'", "'\"'\"'");
-        String escapedCommand = command.replace("'", "'\"'\"'");
-
-        // 使用 AppleScript 打开 Terminal.app
-        String appleScript = String.format(
-            "tell application \"Terminal\" to do script \"cd '%s' && %s\"",
-            escapedWorkingDir, escapedCommand
-        );
-        ProcessBuilder pb = new ProcessBuilder("osascript", "-e", appleScript);
+        ProcessBuilder pb = new ProcessBuilder(buildMacTerminalCommand(command, workingDirectory));
         pb.directory(workDir);
         pb.start();
+    }
+
+    static List<String> buildMacTerminalCommand(String command, String workingDirectory) {
+        String terminalCommand = "cd " + quoteForPosixShell(workingDirectory) + " && " + command;
+
+        // 显式激活 Terminal.app，否则 macOS 可能会在后台执行命令。
+        // 命令通过 argv 传入，避免用户命令中的引号破坏 AppleScript 字符串。
+        String appleScript = "on run argv\n" +
+            "    tell application \"Terminal\"\n" +
+            "        activate\n" +
+            "        do script (item 1 of argv)\n" +
+            "    end tell\n" +
+            "end run";
+
+        return List.of("osascript", "-e", appleScript, "--", terminalCommand);
+    }
+
+    private static String quoteForPosixShell(String value) {
+        return "'" + value.replace("'", "'\"'\"'") + "'";
     }
 
     private static void executeLinuxTerminal(String shellPath, String command, String workingDirectory) throws IOException {
@@ -173,6 +187,14 @@ public class CmdExecutor {
             // 创建新的终端标签页并执行命令
             ShellTerminalWidget widget = terminalView.createLocalShellWidget(workingDirectory, "Run Command", true);
             widget.executeCommand(command);
+
+            // createLocalShellWidget 会创建会话，但在某些平台上不会将隐藏的 Terminal
+            // 工具窗口显示到前台。显式激活以保证用户能立即看到新会话。
+            ToolWindow terminalToolWindow = ToolWindowManager.getInstance(project)
+                .getToolWindow(TerminalToolWindowFactory.TOOL_WINDOW_ID);
+            if (terminalToolWindow != null) {
+                terminalToolWindow.activate(null, true, true);
+            }
         } catch (Exception e) {
             showError("无法打开终端: " + e.getMessage());
             e.printStackTrace();

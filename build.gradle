@@ -5,9 +5,11 @@ plugins {
 
 group 'com.adbyte'
 
-// 从版本文件读取版本号，构建时自动递增
+// 从版本文件读取版本号，本地构建时自动递增。
+// CI 可通过 -PpluginVersion=x.y.z 使用 Git 标签中的确定版本。
 def versionFile = file('version.properties')
 def currentVersion = '1.0.0'
+def requestedVersion = providers.gradleProperty('pluginVersion').orNull
 
 if (versionFile.exists()) {
     def content = versionFile.text.trim()
@@ -16,19 +18,26 @@ if (versionFile.exists()) {
     }
 }
 
-// 解析版本号并递增
-def parts = currentVersion.split('\\.')
-def major = parts.length > 0 ? parts[0].toInteger() : 1
-def minor = parts.length > 1 ? parts[1].toInteger() : 0
-def patch = parts.length > 2 ? parts[2].toInteger() + 1 : 1
-def newVersion = "${major}.${minor}.${patch}"
+def newVersion
+if (requestedVersion != null && !requestedVersion.trim().isEmpty()) {
+    newVersion = requestedVersion.trim()
+} else {
+    // 解析版本号并递增
+    def parts = currentVersion.split('\\.')
+    def major = parts.length > 0 ? parts[0].toInteger() : 1
+    def minor = parts.length > 1 ? parts[1].toInteger() : 0
+    def patch = parts.length > 2 ? parts[2].toInteger() + 1 : 1
+    newVersion = "${major}.${minor}.${patch}"
+}
 
 version = newVersion
 
 // 构建完成后更新版本文件
 buildPlugin.doLast {
-    versionFile.text = "version=${newVersion}"
-    println "Version updated to ${newVersion}"
+    if (requestedVersion == null || requestedVersion.trim().isEmpty()) {
+        versionFile.text = "version=${newVersion}"
+        println "Version updated to ${newVersion}"
+    }
 }
 
 java {

@@ -21,6 +21,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <p>1.0.19:</p>
+    <ul>
+      <li>Bring Terminal.app to the foreground when launching commands on macOS</li>
+      <li>Explicitly activate the IDE Terminal tool window for newly created sessions</li>
+      <li>Safely pass quoted commands and working directories to AppleScript</li>
+    </ul>
     <p>Added AI Git Commit capability (merged from HMYDK/AIGitCommit, AGPL-3.0):</p>
     <ul>
       <li>Generate AI commit messages from staged/selected changes via the Commit dialog</li>
